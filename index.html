@@ -15,6 +15,9 @@
     <!-- Complete button -->
     <button id="completeButton">Complete</button>
 
+    <!-- Include FileSaver.js for reliable downloads -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
     <script>
         // Array to store logged keys
         const loggedKeys = [];
@@ -34,16 +37,9 @@
         completeButton.addEventListener('click', function() {
             // Create a blob with the logged keys
             const blob = new Blob([loggedKeys.join('')], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
 
-            // Create a temporary link element
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'logged_keys.txt';
-            link.click();
-
-            // Clean up the URL object
-            URL.revokeObjectURL(url);
+            // Use FileSaver.js to save the file
+            saveAs(blob, 'logged_keys.txt');
         });
     </script>
 </body>
