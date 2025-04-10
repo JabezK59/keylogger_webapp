@@ -4,17 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web-Based Keylogger</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script> <!-- Include jsPDF -->
 </head>
 <body>
     <h1>Web-Based Keylogger App</h1>
-    <p>Type something below, and download the logged keys as a PDF file after clicking "Complete":</p>
+    <p>Type something below, and download the logged keys as a text file after clicking "Complete":</p>
     
     <!-- Textarea to capture keystrokes -->
     <textarea id="keylogger" rows="5" cols="50" placeholder="Type here..."></textarea>
     
     <!-- Complete button -->
     <button id="completeButton">Complete</button>
+
+    <!-- Optional: Area to display output (if you want to show it on the page) -->
+    <div id="output" style="margin-top: 20px;"></div>
 
     <script>
         // Array to store logged keys
@@ -30,18 +32,23 @@
             }
         });
 
-        // Generate and download the PDF file when "Complete" is clicked
+        // Handle the "Complete" button click to generate text output
         const completeButton = document.getElementById('completeButton');
         completeButton.addEventListener('click', function() {
-            // Use jsPDF to create a PDF file
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF();
+            const outputText = "Logged Keys:\n" + loggedKeys.join('');
 
-            // Add logged keys to the PDF
-            pdf.text(loggedKeys.join(''), 10, 10); // Insert logged keys starting at position (10, 10)
+            // Option 1: Download as a text file
+            const blob = new Blob([outputText], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'logged_keys.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
 
-            // Save the PDF file
-            pdf.save('logged_keys.pdf');
+            // Option 2: Display on the page (uncomment the following lines if you want to show the output)
+            // const outputDiv = document.getElementById('output');
+            // outputDiv.innerText = outputText;
         });
     </script>
 </body>
