@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web-Based Keylogger</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script> <!-- Include jsPDF -->
+    <!-- Include jsPDF library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 </head>
 <body>
     <h1>Web-Based Keylogger App</h1>
@@ -38,7 +39,7 @@
             const pdf = new jsPDF();
 
             // Add logged keys to the PDF
-            pdf.text(loggedKeys.join(''), 10, 10); // Insert logged keys starting at position (10, 10)
+            pdf.text("Logged Keys:\n" + loggedKeys.join(''), 10, 10); // Add content to the PDF starting at position (10, 10)
 
             // Save the PDF file
             pdf.save('logged_keys.pdf');
