@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web-Based Keylogger</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script> <!-- Include jsPDF -->
 </head>
 <body>
     <h1>Web-Based Keylogger App</h1>
-    <p>Type something below, and download the logged keys as a text file after clicking "Complete":</p>
+    <p>Type something below, and download the logged keys as a PDF file after clicking "Complete":</p>
     
     <!-- Textarea to capture keystrokes -->
     <textarea id="keylogger" rows="5" cols="50" placeholder="Type here..."></textarea>
@@ -15,16 +16,13 @@
     <!-- Complete button -->
     <button id="completeButton">Complete</button>
 
-    <!-- Include FileSaver.js for reliable downloads -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-
     <script>
         // Array to store logged keys
         const loggedKeys = [];
 
         // Log keys typed in the textarea (works on both mobile and desktop)
         const textField = document.getElementById('keylogger');
-        textField.addEventListener('input', function(event) {
+        textField.addEventListener('input', function() {
             const value = textField.value; // Get the current text in the textarea
             const lastKey = value[value.length - 1] || ''; // Get the last typed character
             if (lastKey) {
@@ -32,14 +30,18 @@
             }
         });
 
-        // Generate and download the text file when "Complete" is clicked
+        // Generate and download the PDF file when "Complete" is clicked
         const completeButton = document.getElementById('completeButton');
         completeButton.addEventListener('click', function() {
-            // Create a blob with the logged keys
-            const blob = new Blob([loggedKeys.join('')], { type: 'text/plain' });
+            // Use jsPDF to create a PDF file
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
 
-            // Use FileSaver.js to save the file
-            saveAs(blob, 'logged_keys.txt');
+            // Add logged keys to the PDF
+            pdf.text(loggedKeys.join(''), 10, 10); // Insert logged keys starting at position (10, 10)
+
+            // Save the PDF file
+            pdf.save('logged_keys.pdf');
         });
     </script>
 </body>
