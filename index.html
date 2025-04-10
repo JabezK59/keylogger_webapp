@@ -3,11 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web-Based Keylogger</title>
+    <title>Web-Based Keylogger (PDF Output)</title>
+    <!-- Include jsPDF library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <style>
+        .error-message {
+            color: red;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <h1>Web-Based Keylogger App</h1>
-    <p>Type something below, and download the logged keys as a text file after clicking "Complete":</p>
+    <p>Type something below, and download the logged keys as a PDF after clicking "Complete". On mobile, you may need to allow downloads or open in a new tab.</p>
     
     <!-- Textarea to capture keystrokes -->
     <textarea id="keylogger" rows="5" cols="50" placeholder="Type here..."></textarea>
@@ -15,8 +24,9 @@
     <!-- Complete button -->
     <button id="completeButton">Complete</button>
 
-    <!-- Optional: Area to display output -->
+    <!-- Output and error message areas -->
     <div id="output" style="margin-top: 20px;"></div>
+    <div id="errorMessage" class="error-message">Download failed. Try opening in a new tab or checking your browser settings.</div>
 
     <script>
         // Array to store logged keys
@@ -37,32 +47,48 @@
             return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         }
 
-        // Handle the "Complete" button click
+        // Handle the "Complete" button click to generate PDF
         const completeButton = document.getElementById('completeButton');
+        const outputDiv = document.getElementById('output');
+        const errorMessage = document.getElementById('errorMessage');
+
         completeButton.addEventListener('click', function() {
             const outputText = "Logged Keys:\n" + loggedKeys.join('');
-            const blob = new Blob([outputText], { type: 'text/plain' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
+            outputDiv.innerText = outputText; // Display on page for reference
 
-            if (isMobileDevice()) {
-                // For mobile, open in a new tab
-                a.target = '_blank';
-                a.rel = 'noopener noreferrer';
-                window.open(a.href, '_blank');
-            } else {
-                // For desktop, download directly
-                a.download = 'logged_keys.txt';
+            try {
+                // Use jsPDF to create PDF
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF();
+
+                // Add logged keys to PDF
+                pdf.text(outputText, 10, 10);
+
+                // Generate PDF blob
+                const pdfBlob = pdf.output('blob');
+
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(pdfBlob);
+
+                if (isMobileDevice()) {
+                    // For mobile, open in a new tab (user can save manually)
+                    a.target = '_blank';
+                    a.rel = 'noopener noreferrer';
+                    window.open(a.href, '_blank');
+                } else {
+                    // For desktop, download directly
+                    a.download = 'logged_keys.pdf';
+                    a.click();
+                }
+
+                document.body.appendChild(a);
                 a.click();
+                document.body.removeChild(a);
+            } catch (error) {
+                console.error('PDF generation or download error:', error);
+                errorMessage.style.display = 'block';
+                alert('Failed to generate or download PDF. Please check your browser settings or try opening in a new tab.');
             }
-
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-
-            // Optional: Display on page
-            const outputDiv = document.getElementById('output');
-            outputDiv.innerText = outputText;
         });
     </script>
 </body>
