@@ -19,10 +19,14 @@
         // Array to store logged keys
         const loggedKeys = [];
 
-        // Log keys typed in the textarea
+        // Log keys typed in the textarea (works on both mobile and desktop)
         const textField = document.getElementById('keylogger');
-        textField.addEventListener('keypress', function(event) {
-            loggedKeys.push(event.key);
+        textField.addEventListener('input', function(event) {
+            const value = textField.value; // Get the current text in the textarea
+            const lastKey = value[value.length - 1] || ''; // Get the last typed character
+            if (lastKey) {
+                loggedKeys.push(lastKey);
+            }
         });
 
         // Generate and download the text file when "Complete" is clicked
