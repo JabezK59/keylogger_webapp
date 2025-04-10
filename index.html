@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web-Based Keylogger</title>
+</head>
+<body>
+    <h1>Web-Based Keylogger App</h1>
+    <p>Type something below, and download the logged keys as a text file after clicking "Complete":</p>
+    
+    <!-- Textarea to capture keystrokes -->
+    <textarea id="keylogger" rows="5" cols="50" placeholder="Type here..."></textarea>
+    
+    <!-- Complete button -->
+    <button id="completeButton">Complete</button>
+
+    <script>
+        // Array to store logged keys
+        const loggedKeys = [];
+
+        // Log keys typed in the textarea
+        const textField = document.getElementById('keylogger');
+        textField.addEventListener('keypress', function(event) {
+            loggedKeys.push(event.key);
+        });
+
+        // Generate and download the text file when "Complete" is clicked
+        const completeButton = document.getElementById('completeButton');
+        completeButton.addEventListener('click', function() {
+            // Create a blob with the logged keys
+            const blob = new Blob([loggedKeys.join('')], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+
+            // Create a temporary link element
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'logged_keys.txt';
+            link.click();
+
+            // Clean up the URL object
+            URL.revokeObjectURL(url);
+        });
+    </script>
+</body>
+</html>
