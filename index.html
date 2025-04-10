@@ -15,40 +15,54 @@
     <!-- Complete button -->
     <button id="completeButton">Complete</button>
 
-    <!-- Optional: Area to display output (if you want to show it on the page) -->
+    <!-- Optional: Area to display output -->
     <div id="output" style="margin-top: 20px;"></div>
 
     <script>
         // Array to store logged keys
         const loggedKeys = [];
 
-        // Log keys typed in the textarea (works on both mobile and desktop)
+        // Log keys typed in the textarea
         const textField = document.getElementById('keylogger');
         textField.addEventListener('input', function() {
-            const value = textField.value; // Get the current text in the textarea
-            const lastKey = value[value.length - 1] || ''; // Get the last typed character
+            const value = textField.value;
+            const lastKey = value[value.length - 1] || '';
             if (lastKey) {
                 loggedKeys.push(lastKey);
             }
         });
 
-        // Handle the "Complete" button click to generate text output
+        // Function to detect mobile devices
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        // Handle the "Complete" button click
         const completeButton = document.getElementById('completeButton');
         completeButton.addEventListener('click', function() {
             const outputText = "Logged Keys:\n" + loggedKeys.join('');
-
-            // Option 1: Download as a text file
             const blob = new Blob([outputText], { type: 'text/plain' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = 'logged_keys.txt';
+
+            if (isMobileDevice()) {
+                // For mobile, open in a new tab
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                window.open(a.href, '_blank');
+            } else {
+                // For desktop, download directly
+                a.download = 'logged_keys.txt';
+                a.click();
+            }
+
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
 
-            // Option 2: Display on the page (uncomment the following lines if you want to show the output)
-            // const outputDiv = document.getElementById('output');
-            // outputDiv.innerText = outputText;
+            // Optional: Display on page
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerText = outputText;
         });
     </script>
 </body>
